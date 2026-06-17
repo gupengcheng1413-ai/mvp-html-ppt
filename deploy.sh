@@ -40,13 +40,17 @@ if ! command -v ossutil &> /dev/null; then
         wget https://gosspublic.alicdn.com/ossutil/1.7.18/ossutil-v1.7.18-linux-amd64.zip
         unzip -o ossutil-v1.7.18-linux-amd64.zip
         chmod +x ossutil-v1.7.18-linux-amd64/ossutil64
-        sudo mv ossutil-v1.7.18-linux-amd64/ossutil64 /usr/local/bin/ossutil
+        mkdir -p ~/bin
+        mv ossutil-v1.7.18-linux-amd64/ossutil64 ~/bin/ossutil
+        export PATH=~/bin:$PATH
         rm -rf ossutil-v1.7.18-linux-amd64*
     elif [[ "$OSTYPE" == "darwin"* ]]; then
         wget https://gosspublic.alicdn.com/ossutil/1.7.18/ossutil-v1.7.18-mac-arm64.zip
         unzip -o ossutil-v1.7.18-mac-arm64.zip
         chmod +x ossutil-v1.7.18-mac-arm64/ossutil64
-        sudo mv ossutil-v1.7.18-mac-arm64/ossutil64 /usr/local/bin/ossutil
+        mkdir -p ~/bin
+        mv ossutil-v1.7.18-mac-arm64/ossutil64 ~/bin/ossutil
+        export PATH=~/bin:$PATH
         rm -rf ossutil-v1.7.18-mac-arm64*
     fi
 
