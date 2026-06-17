@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5.6寸长条屏 · 产品演示</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ===== Reset & Base ===== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: 'Inter', 'Noto Sans SC', -apple-system, sans-serif;
+  background: #0c0c0e;
+  color: #e8e8ec;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===== Slide Container ===== */
+.deck {
+  position: relative; z-index: 2;
+  width: 100vw; height: 100vh;
+  overflow: hidden;
+  pointer-events: none;
+}
+.slide {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 32px 52px;
+  opacity: 0;
+  transform: translateX(60px);
+  transition: opacity .6s cubic-bezier(.4,0,.2,1), transform .6s cubic-bezier(.4,0,.2,1);
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+.slide.active {
+  opacity: 1; transform: translateX(0);
+  pointer-events: auto;
+}
+.slide.prev {
+  opacity: 0; transform: translateX(-60px);
+}
+
+/* ===== Typography ===== */
+.slide h1 {
+  font-size: clamp(40px, 5.5vw, 76px);
+  font-weight: 800;
+  line-height: 1.2;
+  text-align: center;
+  color: #fff;
+  margin-bottom: 24px;
+}
+.slide h2 {
+  font-size: clamp(30px, 4vw, 58px);
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: center;
+  color: #f0f0f5;
+  margin-bottom: 20px;
+}
+.slide p, .slide li {
+  font-size: clamp(16px, 1.9vw, 24px);
+  line-height: 1.7;
+  color: rgba(255,255,255,.72);
+  max-width: 1000px;
+  text-align: center;
+}
+.slide ul {
+  list-style: none;
+  display: flex; flex-direction: column; gap: 12px;
+  max-width: 1240px;
+}
+.slide li::before {
+  content: '›';
+  margin-right: 12px;
+  color: #06b6d4;
+  font-weight: 700;
+}
+
+/* ===== Glass Card ===== */
+.glass {
+  background: rgba(255,255,255,.04);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 24px;
+  padding: 40px 48px;
+  max-width: 1240px;
+  width: 100%;
+}
+
+/* ===== Device Mockup ===== */
+.device-frame {
+  position: relative;
+  z-index: 10;
+  flex-shrink: 0;
+  width: min(94vw, 1020px);
+  max-width: 100%;
+  aspect-ratio: 1640 / 348;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 2px solid rgba(255,255,255,.1);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.05),
+    0 20px 60px rgba(0,0,0,.5),
+    0 0 80px rgba(99,102,241,.08);
+  margin: 24px auto;
+}
+.device-frame img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.device-frame iframe {
+  position: absolute;
+  top: 0; left: 0;
+  width: 1640px; height: 348px;
+  border: 0; display: block;
+  transform-origin: top left;
+}
+
+/* ===== Feature Grid ===== */
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+  max-width: 1240px; width: 100%;
+  margin-top: 32px;
+}
+.feat-card {
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 16px;
+  padding: 28px 24px;
+  text-align: center;
+  transition: transform .3s ease, border-color .3s ease;
+}
+.feat-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(99,102,241,.3);
+}
+.feat-card .icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+  display: block;
+}
+.feat-card h3 {
+  font-size: 18px; font-weight: 600;
+  color: #f0f0f5;
+  margin-bottom: 8px;
+}
+.feat-card p {
+  font-size: 14px; color: rgba(255,255,255,.55);
+  text-align: center;
+}
+
+/* ===== Spec Badge ===== */
+.spec-badge {
+  display: inline-flex;
+  align-items: center; gap: 8px;
+  background: rgba(6,182,212,.1);
+  border: 1px solid rgba(6,182,212,.25);
+  border-radius: 100px;
+  padding: 8px 20px;
+  font-size: 14px;
+  color: #67e8f9;
+  margin-bottom: 28px;
+}
+.spec-badge::before {
+  content: '';
+  width: 8px; height: 8px;
+  background: #06b6d4;
+  border-radius: 50%;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .5; transform: scale(.7); }
+}
+
+/* ===== Section Divider (章节封面) ===== */
+.divider-num {
+  font-size: clamp(90px, 16vw, 220px);
+  font-weight: 800;
+  line-height: 1;
+  background: linear-gradient(135deg, rgba(99,102,241,.35) 0%, rgba(6,182,212,.25) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
+}
+.divider-sub {
+  font-size: clamp(15px, 1.6vw, 19px);
+  color: rgba(255,255,255,.5);
+  max-width: 860px;
+  text-align: center;
+  margin-top: 16px;
+}
+
+/* ===== Two-Column Split ===== */
+.split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  max-width: 1240px;
+  width: 100%;
+  align-items: center;
+}
+.split.text-left { grid-template-columns: 1.1fr .9fr; }
+.split .col-text { text-align: left; }
+.split .col-text p,
+.split .col-text li { text-align: left; max-width: none; }
+
+/* ===== Pain Point Cards ===== */
+.pain-list {
+  display: flex; flex-direction: column; gap: 14px;
+  width: 100%; max-width: 1240px;
+  margin-top: 8px;
+}
+.pain-card {
+  display: flex; align-items: flex-start; gap: 16px;
+  background: rgba(244,63,94,.05);
+  border: 1px solid rgba(244,63,94,.18);
+  border-left: 3px solid rgba(244,63,94,.6);
+  border-radius: 12px;
+  padding: 18px 22px;
+  text-align: left;
+}
+.pain-card .pt-icon {
+  font-size: 22px; flex: none; line-height: 1.3;
+}
+.pain-card h4 {
+  font-size: clamp(15px, 1.6vw, 20px);
+  font-weight: 600; color: #fda4af;
+  margin-bottom: 4px;
+}
+.pain-card p {
+  font-size: clamp(13px, 1.4vw, 16px);
+  color: rgba(255,255,255,.62);
+  text-align: left; line-height: 1.55; max-width: none;
+}
+
+/* ===== Solution Cards ===== */
+.sol-list {
+  display: flex; flex-direction: column; gap: 14px;
+  width: 100%; max-width: 1240px;
+  margin-top: 8px;
+}
+.sol-card {
+  display: flex; align-items: flex-start; gap: 16px;
+  background: rgba(16,185,129,.05);
+  border: 1px solid rgba(16,185,129,.18);
+  border-left: 3px solid rgba(16,185,129,.6);
+  border-radius: 12px;
+  padding: 18px 22px;
+  text-align: left;
+}
+.sol-card .pt-icon { font-size: 22px; flex: none; line-height: 1.3; }
+.sol-card h4 {
+  font-size: clamp(15px, 1.6vw, 20px);
+  font-weight: 600; color: #6ee7b7;
+  margin-bottom: 4px;
+}
+.sol-card p {
+  font-size: clamp(13px, 1.4vw, 16px);
+  color: rgba(255,255,255,.62);
+  text-align: left; line-height: 1.55; max-width: none;
+}
+
+/* ===== Section Eyebrow (功能模块标签) ===== */
+.eyebrow {
+  font-size: 14px; letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.4);
+  margin-bottom: 10px;
+}
+
+/* ===== Highlight Stat ===== */
+.stat-row {
+  display: flex; gap: 48px; justify-content: center;
+  margin-top: 28px; flex-wrap: wrap;
+}
+.stat {
+  text-align: center;
+}
+.stat .num {
+  font-size: clamp(36px, 5vw, 56px);
+  font-weight: 800;
+  background: linear-gradient(135deg, #34d399 0%, #06b6d4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+}
+.stat .label {
+  font-size: 14px; color: rgba(255,255,255,.5);
+  margin-top: 8px;
+}
+
+/* ===== Device frame smaller variant (并排时) ===== */
+.device-frame.sm { width: 100%; max-width: 520px; margin: 0; }
+
+/* ===== Section heading with accent ===== */
+.sec-h {
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 24px;
+}
+.sec-h .tag {
+  font-size: 13px; font-weight: 600;
+  padding: 5px 14px; border-radius: 100px;
+}
+.sec-h .tag.pain { background: rgba(244,63,94,.12); color: #fda4af; border: 1px solid rgba(244,63,94,.25); }
+.sec-h .tag.sol  { background: rgba(16,185,129,.12); color: #6ee7b7; border: 1px solid rgba(16,185,129,.25); }
+.sec-h .tag.star { background: rgba(234,179,8,.12); color: #fde047; border: 1px solid rgba(234,179,8,.25); }
+
+/* ===== Stagger Entrance ===== */
+.slide.active .stagger { animation: fade-up .5s ease both; }
+.slide.active .stagger:nth-child(1) { animation-delay: .1s; }
+.slide.active .stagger:nth-child(2) { animation-delay: .2s; }
+.slide.active .stagger:nth-child(3) { animation-delay: .3s; }
+.slide.active .stagger:nth-child(4) { animation-delay: .4s; }
+.slide.active .stagger:nth-child(5) { animation-delay: .5s; }
+.slide.active .stagger:nth-child(6) { animation-delay: .6s; }
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Progress Bar ===== */
+.progress {
+  position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
+  z-index: 10;
+  display: flex; gap: 8px; align-items: center;
+  padding: 10px 20px;
+  background: rgba(0,0,0,.5);
+  backdrop-filter: blur(10px);
+  border-radius: 100px;
+  border: 1px solid rgba(255,255,255,.06);
+  pointer-events: auto;
+}
+.dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.2);
+  transition: all .3s ease;
+  cursor: pointer;
+  pointer-events: auto;
+}
+  cursor: pointer;
+}
+.dot.active {
+  background: #06b6d4;
+  width: 24px;
+  border-radius: 4px;
+}
+
+/* ===== Page Counter ===== */
+.page-num {
+  position: fixed; bottom: 32px; right: 40px;
+  z-index: 10;
+  font-size: 13px;
+  color: rgba(255,255,255,.35);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ===== Keyboard Hint ===== */
+.kbd-hint {
+  position: fixed; bottom: 32px; left: 40px;
+  z-index: 10;
+  font-size: 12px;
+  color: rgba(255,255,255,.25);
+}
+.kbd-hint kbd {
+  display: inline-block;
+  padding: 2px 8px;
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 11px;
+  margin: 0 2px;
+}
+
+/* ===== Demo Label ===== */
+.demo-label {
+  position: absolute;
+  top: 12px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 13px;
+  color: rgba(255,255,255,.45);
+  background: rgba(0,0,0,.4);
+  padding: 4px 16px;
+  border-radius: 100px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* ===== Responsive ===== */
+/* 横屏矮视口：允许垂直滚动 */
+@media (max-height: 520px) {
+  .slide {
+    padding-top: 16px;
+    padding-bottom: 24px;
+  }
+  .pain-card, .sol-card { padding: 10px 14px; }
+  .feat-card { padding: 16px 14px; }
+  .device-frame { margin: 10px auto; }
+  .stat-row { margin-top: 12px; }
+}
+@media (max-width: 768px) {
+  .slide { padding: 20px 16px; }
+  .glass { padding: 20px 16px; }
+  .features { grid-template-columns: 1fr; gap: 10px; }
+  .pain-list, .sol-list { gap: 10px; }
+  .pain-card, .sol-card { padding: 14px 16px; }
+  .dot { width: 12px; height: 12px; touch-action: manipulation; }
+  .dot.active { width: 28px; }
+  .page-num, .kbd-hint { display: none; }
+}
+/* 竖屏：左文右图改为上文下图 */
+@media (max-width: 600px) {
+  .pain-card > div[style*="display:flex"],
+  .sol-card > div[style*="display:flex"] {
+    flex-direction: column !important;
+  }
+  .pain-card img, .sol-card img {
+    height: auto !important; width: 100% !important; max-width: 100% !important;
+  }
+}
+@media (orientation: portrait) {
+  .device-frame { width: 96vw !important; }
+  .stat-row { gap: 20px; }
+}
+</style>
+</head>
+<body>
+
+
+<div class="deck" id="deck">
+
+  <!-- Slide 0: Cover -->
+  <section class="slide active">
+    <div class="spec-badge stagger">T40 Pro / P40 Pro 词典笔</div>
+    <h1 class="stagger">新功能介绍</h1>
+    <p class="stagger">分屏设计 · 心灵驿站 · 句子讲解 —— 三大能力，重新定义智能词典笔的成长价值</p>
+    <div class="device-frame stagger" style="margin-top:40px">
+      <iframe class="live-demo" src="https://gupengcheng1413-ai.github.io/portal-demo/" title="Portal 主页 Live Demo" allow="autoplay"></iframe>
+    </div>
+  </section>
+
+  <!-- Slide 1: 三大功能总览 -->
+  <section class="slide">
+    <div class="eyebrow stagger">PRODUCT OVERVIEW</div>
+    <h2 class="stagger">三大新功能</h2>
+    <p class="stagger" style="margin-bottom:32px">在硬件参数与词库日趋同质化的当下，我们从「认知宽度、情绪温度、学习深度」三个维度突破</p>
+    <div class="features">
+      <div class="feat-card stagger">
+        <h3>分屏设计</h3>
+        <p>不只是屏幕大了一些，是认知宽度翻了一番</p>
+      </div>
+      <div class="feat-card stagger">
+        <h3>心灵驿站</h3>
+        <p>不止搞定学习难题，更安放成长小情绪</p>
+      </div>
+      <div class="feat-card stagger">
+        <h3>句子讲解</h3>
+        <p>七大分层解析，扫清英语阅读障碍</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 功能一：分屏设计 ============ -->
+
+  <!-- Slide 2: 分屏 章节封面 -->
+  <section class="slide">
+    <div class="divider-num stagger">01</div>
+    <h2 class="stagger">分屏设计</h2>
+    <p class="divider-sub stagger">不只是屏幕大了一些，是认知的宽度翻了一番</p>
+  </section>
+
+  <!-- Slide 3: 分屏 痛点 -->
+  <section class="slide">
+    <div class="sec-h stagger"><span class="tag pain">用户痛点</span></div>
+    <h2 class="stagger" style="margin-bottom:28px">传统纵向布局的三重困扰</h2>
+    <div class="pain-list">
+      <div class="pain-card stagger">
+        <div>
+          <h4>瞬时遗忘</h4>
+          <p>向下翻看释义、例句时，顶部的原词与音标已消失，容易忘记词头，产生"我刚在查哪个词"的困惑。</p>
+        </div>
+      </div>
+      <div class="pain-card stagger">
+        <div style="display:flex;align-items:center;gap:24px;width:100%">
+          <div style="flex:1;min-width:0">
+            <h4>信息密度失衡</h4>
+            <p>屏幕横向空间被大量留白浪费，释义和例句右侧大片空白，一屏可承载的内容有限。</p>
+          </div>
+          <img src="assets/fenping-density.png" style="height:130px;width:auto;max-width:50%;border-radius:8px;opacity:.92;flex:none;align-self:stretch;object-fit:contain">
+        </div>
+      </div>
+      <div class="pain-card stagger">
+        <div style="display:flex;align-items:center;gap:24px;width:100%">
+          <div style="flex:1;min-width:0">
+            <h4>对比困难</h4>
+            <p>长句中英对译时，看到译文却不知对应哪句原文，无法在同一视线水平内快速比对。</p>
+          </div>
+          <img src="assets/fenping-contrast.png" style="height:130px;width:auto;max-width:50%;border-radius:8px;opacity:.92;flex:none;align-self:stretch;object-fit:contain">
+        </div>
+      </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 4: 分屏 解决方案 -->
+  <section class="slide">
+    <div class="sec-h stagger"><span class="tag sol">解决方案</span></div>
+    <h2 class="stagger" style="margin-bottom:28px">两种分屏模式 · 主从结构</h2>
+    <div class="sol-list">
+      <div class="sol-card stagger">
+        <div>
+          <h4>主次分明式（7:3）— 用于词典查询</h4>
+          <p>左侧固定 30% 锁定核心信息（单词、音标、发音）；右侧滚动 70% 展示词性、详细释义、例句。任何时候都能确认在查哪个词，降低认知负荷。</p>
+        </div>
+      </div>
+      <div class="sol-card stagger">
+        <div>
+          <h4>对称参照式（5:5）— 用于长句翻译</h4>
+          <p>左右等宽，左原文右译文，按句对齐 + 联动滚动。一侧滑动另一侧自动跟随，实现"左右参照、视线零迁徙"。</p>
+        </div>
+      </div>
+      <div class="sol-card stagger">
+        <div>
+          <h4>分屏 / 全屏自由切换 — 默认分屏</h4>
+          <p>查词阶段分屏提效，精读长文本时切换全屏沉浸阅读，兼顾不同学习阶段的诉求。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 5: 分屏 亮点 + 截图 -->
+  <section class="slide">
+    <div class="sec-h stagger"><span class="tag star">产品亮点</span></div>
+    <h2 class="stagger" style="margin-bottom:8px">从"翻页式阅读"到"映射式阅读"</h2>
+    <div class="device-frame stagger" style="margin:20px auto">
+      <iframe class="live-demo" src="https://gupengcheng1413-ai.github.io/fenping-demo-v3/" title="分屏查词翻译 Live Demo" allow="autoplay"></iframe>
+    </div>
+    <div class="stat-row stagger">
+      <div class="stat"><div class="num">+30%</div><div class="label">查词速度提升</div></div>
+      <div class="stat"><div class="num">&lt;20ms</div><div class="label">左右两栏联动延迟</div></div>
+      <div class="stat"><div class="num">7:3</div><div class="label">主从黄金分配</div></div>
+    </div>
+  </section>
+
+  <!-- ============ 功能二：心灵驿站 ============ -->
+
+  <!-- Slide 6: 心灵驿站 章节封面 -->
+  <section class="slide">
+    <div class="divider-num stagger">02</div>
+    <h2 class="stagger">心灵驿站</h2>
+    <p class="divider-sub stagger">不止搞定学习难题，更安放成长小情绪</p>
+  </section>
+
+  <!-- Slide 7: 心灵驿站 痛点 -->
+  <section class="slide">
+    <div class="sec-h stagger"><span class="tag pain">用户洞察</span></div>
+    <h2 class="stagger" style="margin-bottom:28px">被忽略的青少年隐性心理需求</h2>
+    <div class="pain-list">
+      <div class="pain-card stagger">
+        <div>
+          <h4>情绪积压无出口</h4>
+          <p>学业竞争、考试压力、同学关系、亲子沟通，很多小情绪不愿与家长老师说，只能自己憋着，慢慢内耗。</p>
+        </div>
+      </div>
+      <div class="pain-card stagger">
+        <div>
+          <h4>碎片时间易陷入精神内耗</h4>
+          <p>空闲时容易胡思乱想、钻牛角尖，没有合适的解压方式，容易被负面情绪裹挟。</p>
+        </div>
+      </div>
+      <div class="pain-card stagger">
+        <div>
+          <h4>学习工具缺少人文温度</h4>
+          <p>传统词典笔工具属性太强，只有知识点没有人情味，无法给到情绪安抚和心理支撑。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 8: 心灵驿站 四大子功能 -->
+  <section class="slide">
+    <div class="sec-h stagger"><span class="tag sol">解决方案</span></div>
+    <h2 class="stagger" style="margin-bottom:8px">随身"心灵树洞" · 四大子功能</h2>
+    <p class="stagger" style="margin-bottom:24px;font-size:15px">向内安放情绪，向外正向引导 —— 克制化轻娱乐设计，解压不沉迷</p>
+    <div class="features">
+      <div class="feat-card stagger">
+        <h3>灵感锦囊</h3>
+        <p>一句有力量的话，打开新的思考角度。覆盖考试打气、人际相处、自我成长等高频场景</p>
+      </div>
+      <div class="feat-card stagger">
+        <h3>每日星语</h3>
+        <p>星座寄语 + 多维学习状态评分 + 幸运指南，为学习日注入仪式感与正向激励</p>
+      </div>
+      <div class="feat-card stagger">
+        <h3>性格认知</h3>
+        <p>首创校园版 MBTI，贴合中小学学习生活场景，发现学习优势</p>
+      </div>
+      <div class="feat-card stagger">
+        <h3>姓名寓意</h3>
+        <p>解读姓名内涵、姓氏起源、英文名推荐，文化科普合规无迷信</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 9: 心灵驿站 亮点 + 截图 -->
+  <section class="slide">
+    <div class="sec-h stagger"><span class="tag star">产品亮点</span></div>
+    <h2 class="stagger" style="margin-bottom:8px">学习 + 情绪双态融合 · 有温度更有分寸</h2>
+    <div class="device-frame stagger" style="margin:20px auto">
+      <iframe class="live-demo" src="https://gupengcheng1413-ai.github.io/mindstation/v1/" title="心灵驿站 Live Demo" allow="autoplay"></iframe>
+    </div>
+    <p class="stagger" style="margin-top:16px;font-size:15px;color:rgba(255,255,255,.55);max-width:880px">
+      坚守"学习工具为主、情绪陪伴为辅"，无过度娱乐化设计，文案人工逐句审核，全部适配中小学青少年心智认知。
+    </p>
+  </section>
+
+  <!-- ============ 功能三：句子讲解 ============ -->
+
+  <!-- Slide 10: 句子讲解 章节封面 -->
+  <section class="slide">
+    <div class="divider-num stagger">03</div>
+    <h2 class="stagger">句子讲解</h2>
+    <p class="divider-sub stagger">七大分层解析，扫清英语阅读障碍</p>
+  </section>
+
+  <!-- Slide 11: 句子讲解 痛点 + 场景 -->
+  <section class="slide">
+    <div class="sec-h stagger"><span class="tag pain">用户痛点</span></div>
+    <h2 class="stagger" style="margin-bottom:28px">新课标下的英语自学难题</h2>
+    <div class="pain-list">
+      <div class="pain-card stagger">
+        <div>
+          <h4>新课标教材难度变大，自学门槛高</h4>
+          <p>词汇扩容、阅读篇目加长、长难句占比提升，孩子翻看课本很难自主拆解长难句、吃透隐性考点。</p>
+        </div>
+      </div>
+      <div class="pain-card stagger">
+        <div>
+          <h4>完形填空 / 阅读理解看不懂</h4>
+          <p>试卷考题、教辅练习、课外读物里的陌生长难句，书本无详细注解，看不懂句子影响阅读。</p>
+        </div>
+      </div>
+      <div class="sol-card stagger">
+        <div>
+          <h4>解决方案：覆盖两大核心场景</h4>
+          <p>课前预习 —— 对照课本扫描，解锁解析+单词卡+知识点+翻译+发音；课外刷题/阅读 —— 随手扫描陌生句子即时解析。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 12: 句子讲解 七大模块 -->
+  <section class="slide">
+    <div class="sec-h stagger"><span class="tag sol">核心能力</span></div>
+    <h2 class="stagger" style="margin-bottom:24px">七大分层解析 · 笔记式精讲</h2>
+    <div class="features" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));max-width:1000px">
+      <div class="feat-card stagger"><span class="icon">①</span><h3>句子点拨</h3><p>核心句型、高频搭配、隐藏考点</p></div>
+      <div class="feat-card stagger"><span class="icon">②</span><h3>重点词汇</h3><p>音标释义、搭配例句、配图记词</p></div>
+      <div class="feat-card stagger"><span class="icon">③</span><h3>知识点讲解</h3><p>文本+短视频，抽象考点具象化</p></div>
+      <div class="feat-card stagger"><span class="icon">④</span><h3>整句翻译</h3><p>贴合课本语境的精准译法</p></div>
+      <div class="feat-card stagger"><span class="icon">⑤</span><h3>标准发音</h3><p>规范发音，纠正读音误区</p></div>
+      <div class="feat-card stagger"><span class="icon">⑥</span><h3>专项语法</h3><p>人工标注时态、句式结构</p></div>
+      <div class="feat-card stagger"><span class="icon">⑦</span><h3>智能跟读</h3><p>中高考同源测评，跟读打分</p></div>
+    </div>
+  </section>
+
+  <!-- Slide 13: 句子讲解 亮点 + 截图 -->
+  <section class="slide">
+    <div class="sec-h stagger"><span class="tag star">产品亮点</span></div>
+    <h2 class="stagger" style="margin-bottom:8px">课本笔记式划重点 · 课外 AI 解析</h2>
+    <div class="device-frame stagger" style="margin:20px auto">
+      <iframe class="live-demo" src="https://gupengcheng1413-ai.github.io/portal-demo/jiangjuzi/" title="句子讲解 Live Demo" allow="autoplay"></iframe>
+    </div>
+    <p class="stagger" style="margin-top:16px;font-size:15px;color:rgba(255,255,255,.55);max-width:880px">
+      仿照线下老师课堂批注逻辑电子化标注重难点，图文视频多元讲解；内容严格对标现行新课标教材，剔除超纲偏难知识点。
+    </p>
+  </section>
+
+  <!-- ============ 收尾 ============ -->
+
+  <!-- Slide 14: 价值总结 -->
+  <section class="slide">
+    <div class="eyebrow stagger">SUMMARY</div>
+    <h2 class="stagger" style="margin-bottom:32px">重新定义智能词典笔的成长价值</h2>
+    <div class="features">
+      <div class="feat-card stagger">
+        <h3>认知的宽度</h3>
+        <p>分屏设计让大屏每一像素都产生价值，查词更高效、对照更直观</p>
+      </div>
+      <div class="feat-card stagger">
+        <h3>情绪的温度</h3>
+        <p>心灵驿站守护成长心绪，硬核学习力兼顾柔性陪伴力</p>
+      </div>
+      <div class="feat-card stagger">
+        <h3>学习的深度</h3>
+        <p>句子讲解拆解阅读难点，从课前预习到课后复习全链路覆盖</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 15: Thank You -->
+  <section class="slide">
+    <h1 class="stagger">Thank You</h1>
+    <p class="stagger">一边是高效求知，一边是温柔治愈 —— 陪伴孩子成长的随身伙伴</p>
+  </section>
+
+</div>
+
+<!-- Progress -->
+<div class="progress" id="progress"></div>
+<div class="page-num" id="pageNum"></div>
+<div class="kbd-hint"><kbd>←</kbd> <kbd>→</kbd> 翻页</div>
+
+<button id="fsBtn" title="全屏" style="
+  position:fixed;top:20px;right:20px;z-index:10;
+  width:36px;height:36px;border:1px solid rgba(255,255,255,.15);
+  background:rgba(0,0,0,.4);border-radius:8px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;transition:background .2s;backdrop-filter:blur(6px)
+" onmouseenter="this.style.background='rgba(255,255,255,.1)'" onmouseleave="this.style.background='rgba(0,0,0,.4)'">
+  <svg id="fsIcon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+    <path d="M1 5V1h4M11 1h4v4M15 11v4h-4M5 15H1v-4"/>
+  </svg>
+</button>
+
+<script>
+// ===== Slide Engine =====
+const slides = document.querySelectorAll('.slide');
+const progress = document.getElementById('progress');
+const pageNum = document.getElementById('pageNum');
+let current = 0;
+
+// Build dots
+slides.forEach((_, i) => {
+  const dot = document.createElement('div');
+  dot.className = 'dot' + (i === 0 ? ' active' : '');
+  dot.addEventListener('click', () => goTo(i));
+  progress.appendChild(dot);
+});
+
+function goTo(index) {
+  if (index < 0 || index >= slides.length || index === current) return;
+  const dir = index > current ? 1 : -1;
+  // 清除所有 slide 的 active/prev 状态
+  slides.forEach(s => s.className = 'slide');
+  // 设置当前页和目标页状态
+  slides[current].className = 'slide' + (dir > 0 ? ' prev' : '');
+  slides[index].className = 'slide active';
+  current = index;
+  updateUI();
+}
+
+function updateUI() {
+  const dots = progress.querySelectorAll('.dot');
+  dots.forEach((d, i) => d.className = 'dot' + (i === current ? ' active' : ''));
+  pageNum.textContent = (current + 1) + ' / ' + slides.length;
+  // scale live iframes in active slide (now + after layout settles)
+  rescaleActive();
+  setTimeout(rescaleActive, 120);
+}
+
+function scaleIframe(iframe) {
+  const w = iframe.parentElement.clientWidth;
+  if (w) iframe.style.transform = `scale(${w / 1640})`;
+}
+function rescaleActive() {
+  slides[current].querySelectorAll('.live-demo').forEach(scaleIframe);
+}
+window.addEventListener('resize', rescaleActive);
+window.addEventListener('orientationchange', () => {
+  setTimeout(rescaleActive, 300);
+});
+updateUI();
+
+// Keyboard
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+    e.preventDefault();
+    goTo(current + 1);
+  } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    goTo(current - 1);
+  }
+});
+
+// Touch swipe
+let startX = 0;
+document.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; });
+document.addEventListener('touchend', (e) => {
+  const dx = e.changedTouches[0].clientX - startX;
+  if (Math.abs(dx) > 50) goTo(current + (dx < 0 ? 1 : -1));
+});
+
+// Fullscreen
+const fsBtn = document.getElementById('fsBtn');
+const enterPath = 'M1 5V1h4M11 1h4v4M15 11v4h-4M5 15H1v-4';
+const exitPath  = 'M5 1v4H1M15 5h-4V1M11 15v-4h4M1 11h4v4';
+function updateFsIcon() {
+  document.getElementById('fsIcon').querySelector('path').setAttribute('d',
+    document.fullscreenElement ? exitPath : enterPath);
+}
+fsBtn.addEventListener('click', () => {
+  document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+});
+document.addEventListener('fullscreenchange', updateFsIcon);
+let wheelLock = false;
+document.addEventListener('wheel', (e) => {
+  if (wheelLock) return;
+  if (Math.abs(e.deltaY) > 30) {
+    wheelLock = true;
+    goTo(current + (e.deltaY > 0 ? 1 : -1));
+    setTimeout(() => { wheelLock = false; }, 800);
+  }
+});
+
+</script>
+</body>
+</html>
