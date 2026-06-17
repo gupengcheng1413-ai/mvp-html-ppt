@@ -1,0 +1,16 @@
+# 敏感信息
+.env
+*.key
+*.pem
+
+# ossutil 配置
+.ossutilconfig
+
+# 字体文件（太大）
+fonts/
+fonts.css
+
+# 临时文件
+*.log
+*.tmp
+.DS_Store
